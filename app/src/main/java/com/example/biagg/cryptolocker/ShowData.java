@@ -4,10 +4,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShowData extends AppCompatActivity {
 
@@ -19,6 +24,17 @@ public class ShowData extends AppCompatActivity {
         setSupportActionBar(toolbar);
         View view = this.getWindow().getDecorView();
         view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
+        recList.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recList.setLayoutManager(llm);
+        List<Website> set = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            Website w = new Website("Slack", "pippo", "pluto");
+            set.add(w);
+        }
+        recList.setAdapter(new WebsiteAdapter(set));
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
