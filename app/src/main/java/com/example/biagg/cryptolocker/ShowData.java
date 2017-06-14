@@ -3,14 +3,17 @@ package com.example.biagg.cryptolocker;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +27,13 @@ public class ShowData extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         View view = this.getWindow().getDecorView();
-        view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
         RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
+        Toast.makeText(this, getIntent().getStringExtra("key"), Toast.LENGTH_SHORT).show();
         List<Website> set = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             Website w = new Website("Slack", "pippo", "pluto");
