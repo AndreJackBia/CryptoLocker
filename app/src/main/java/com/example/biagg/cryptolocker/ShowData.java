@@ -1,15 +1,16 @@
 package com.example.biagg.cryptolocker;
 
-import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.JsonReader;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -20,12 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,6 @@ import java.util.List;
 public class ShowData extends AppCompatActivity {
 
     private static final String PASSWD = "passwd";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,51 +39,67 @@ public class ShowData extends AppCompatActivity {
         setSupportActionBar(toolbar);
         View view = this.getWindow().getDecorView();
         view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
+        final RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
-        final String key = getIntent().getStringExtra("key");
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-        Website w = new Website("Slack", "pippo", "pluto");
-        JSONArray json = new JSONArray();
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("name", w.getName());
-            obj.put("uID", w.getuID());
-            obj.put("psw", w.getPsw());
-            json.put(obj);
-        } catch (JSONException e) {
-            Log.e("JSONExeption", "error creating JSONObj");
-        }
-        FileOutputStream outputStream;
-        try {
-            outputStream = openFileOutput(PASSWD, Context.MODE_PRIVATE);
-            outputStream.write(json.toString().getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            Log.e("Sti cazzi", "non c'è il file");
-        }
-        List<Website> set = decryptData(key);
-        recList.setAdapter(new WebsiteAdapter(set));
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                final WebsiteAdapter adapter = (WebsiteAdapter) recList.getAdapter();
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                int swipedPosition = viewHolder.getAdapterPosition();
+                                adapter.remove(swipedPosition);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                adapter.notifyDataSetChanged();
+                                break;
+                        }
+                    }
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(ShowData.this);
+                builder.setCancelable(false)
+                        .setTitle("Confirmation")
+                        .setMessage("Are you sure you want to delete this item?")
+                        .setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        final String key = getIntent().getStringExtra("key");
+        //deleteFile(PASSWD);
+        List set = decryptData(key);
+        recList.setAdapter(new WebsiteAdapter(this, set));
+        itemTouchHelper.attachToRecyclerView(recList);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(ShowData.this, InsertEntry.class);
+                intent.putExtra("key", key);
+                startActivity(intent);
             }
         });
     }
 
     private List decryptData(String key) {
         List<Website> res = new ArrayList<>();
-        FileInputStream fis = null;
+        FileInputStream fis;
         try {
             fis = openFileInput(PASSWD);
         } catch (FileNotFoundException e) {
-            Log.e("FileNotFound Exception", "The file does not exist");
+            return res;
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
@@ -110,6 +123,7 @@ public class ShowData extends AppCompatActivity {
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
         }
+
         return res;
     }
 

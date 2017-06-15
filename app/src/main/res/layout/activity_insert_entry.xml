@@ -1,0 +1,94 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:text="Insert Website:"
+            android:textSize="20sp"
+            android:textColor="@color/myWhite"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:id="@+id/wbs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:textAlignment="center"
+            android:textColor="@color/myWhite"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wbs"
+            android:textColor="@color/myWhite"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="33dp"
+            android:text="Insert UserID:"
+            android:textSize="20sp"
+            />
+
+        <EditText
+            android:id="@+id/userid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:textColor="@color/myWhite"
+            android:inputType="textPersonName"
+            android:layout_below="@+id/textView3"
+            android:layout_alignStart="@+id/wbs" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="39dp"
+            android:textColor="@color/myWhite"
+            android:textSize="20sp"
+            android:text="Insert password:"
+            android:layout_below="@+id/userid"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:id="@+id/passwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/userid"
+            android:layout_below="@+id/textView4"
+            android:layout_marginTop="25dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:textColor="@color/myWhite"
+            android:imeOptions="actionSend"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/passwd"
+            android:textColor="@color/myWhite"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="Store Now"
+            android:background="@color/colorAccent"
+            />
+    </RelativeLayout>
+</ScrollView>
