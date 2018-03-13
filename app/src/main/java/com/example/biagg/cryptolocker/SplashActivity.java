@@ -17,7 +17,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         startActivity(new Intent(SplashActivity.this, InsertKeyword.class));
         finish();
-
     }
 
 }

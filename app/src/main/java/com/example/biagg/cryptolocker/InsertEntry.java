@@ -59,7 +59,7 @@ public class InsertEntry extends AppCompatActivity {
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Website w = new Website(wbs.getText().toString(),uid.getText().toString(),psw.getText().toString());
+                final Website w = new Website(wbs.getText().toString(), uid.getText().toString(), psw.getText().toString());
                 AlertDialog alertDialog = new AlertDialog.Builder(InsertEntry.this).create();
                 alertDialog.setTitle("Confirmation");
                 alertDialog.setMessage("Are you sure?");
@@ -92,8 +92,10 @@ public class InsertEntry extends AppCompatActivity {
             outputStream = openFileOutput(PASSWD, Context.MODE_PRIVATE);
             outputStream.write(data.toString().getBytes());
             outputStream.close();
-        } catch (Exception e) {
-            Log.e("Sti cazzi", "non c'è il file");
+        } catch (FileNotFoundException e) {
+            Log.e("Missing file", "File not found");
+        } catch (IOException e) {
+            Log.e("IOException", "Error while writing");
         }
     }
 

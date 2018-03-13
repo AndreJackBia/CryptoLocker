@@ -31,6 +31,7 @@ import java.util.List;
 public class ShowData extends AppCompatActivity {
 
     private static final String PASSWD = "passwd";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +57,7 @@ public class ShowData extends AppCompatActivity {
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
+                        switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 int swipedPosition = viewHolder.getAdapterPosition();
                                 adapter.remove(swipedPosition);
@@ -123,7 +124,6 @@ public class ShowData extends AppCompatActivity {
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
         }
-
         return res;
     }
 
