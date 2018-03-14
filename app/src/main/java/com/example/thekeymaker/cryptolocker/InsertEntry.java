@@ -7,7 +7,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +29,8 @@ import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import static com.example.biagg.cryptolocker.Cryptos.encrypt;
 
 public class InsertEntry extends AppCompatActivity {
 
@@ -86,28 +87,29 @@ public class InsertEntry extends AppCompatActivity {
     private boolean writeEntry(Website w) {
         JSONArray data = getJsonArray();
         JSONObject obj = new JSONObject();
+        String key = getIntent().getStringExtra("key");
         try {
-            String temp = encrypt(w.getName(),getIntent().getStringExtra("key"));
+            String temp = encrypt(w.getName(), key);
             if (temp == null)
                 return false;
             obj.put("name", temp);
-            temp = encrypt(w.getuID(),getIntent().getStringExtra("key"));
+            temp = encrypt(w.getuID(), key);
             if (temp == null)
                 return false;
             obj.put("uID", temp);
-            temp = encrypt(w.getPsw(),getIntent().getStringExtra("key"));
+            temp = encrypt(w.getPsw(), key);
             if (temp == null)
                 return false;
-            obj.put("psw", encrypt(w.getPsw(),getIntent().getStringExtra("key")));
+            obj.put("psw", temp);
             data.put(obj);
-        } catch (JSONException e) {
-            Log.e("JSONExeption", "error creating JSONObj");
-        }
-        FileOutputStream outputStream;
-        try {
+
+            FileOutputStream outputStream;
             outputStream = openFileOutput(PASSWD, Context.MODE_PRIVATE);
             outputStream.write(data.toString().getBytes());
             outputStream.close();
+        } catch (JSONException e) {
+            Log.e("JSONExeption", "error creating JSONObj");
+            return false;
         } catch (FileNotFoundException e) {
             Log.e("Missing file", "File not found");
             return false;
@@ -116,35 +118,6 @@ public class InsertEntry extends AppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    private String encrypt(String psw, String keyword) {
-        String result = null;
-        try {
-            byte[] key = Arrays.copyOf(keyword.getBytes("UTF-8"), 16);
-            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-            byte[] encrypted = cipher.doFinal(psw.getBytes());
-            result = Base64.encodeToString(encrypted, Base64.DEFAULT);
-
-            /*
-            * Old encryption
-            byte[] key = keyword.getBytes("UTF-8");
-            MessageDigest sha;
-            sha = MessageDigest.getInstance("SHA-1");
-            key = sha.digest(key);
-            key = Arrays.copyOf(key, 16);
-            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-            byte[] encrypted = cipher.doFinal(psw.getBytes());
-            result = Base64.encodeToString(encrypted, Base64.DEFAULT);*/
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     private JSONArray getJsonArray() {

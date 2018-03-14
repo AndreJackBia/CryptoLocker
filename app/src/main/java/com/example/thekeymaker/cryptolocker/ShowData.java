@@ -33,6 +33,8 @@ import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import static com.example.biagg.cryptolocker.Cryptos.decrypt;
+
 public class ShowData extends AppCompatActivity {
 
     private static final String PASSWD = "passwd";
@@ -101,6 +103,7 @@ public class ShowData extends AppCompatActivity {
     }
 
     private List decryptData(String key) {
+        Cryptos cryptos = new Cryptos();
         List<Website> res = new ArrayList<>();
         FileInputStream fis;
         try {
@@ -134,20 +137,6 @@ public class ShowData extends AppCompatActivity {
             Log.e("JSON Exception", "Malformed JSON array");
         }
         return res;
-    }
-
-    public static String decrypt(String encrypted, String keyword) {
-        try {
-            byte[] key = Arrays.copyOf(keyword.getBytes("UTF-8"), 16);
-            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            byte[] original = cipher.doFinal(Base64.decode(encrypted, Base64.DEFAULT));
-            return new String(original);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
     }
 
     @Override

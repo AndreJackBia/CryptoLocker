@@ -102,20 +102,6 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
         }
     }
 
-    public static String decrypt(String encrypted, String keyword) {
-        try {
-            byte[] key = Arrays.copyOf(keyword.getBytes("UTF-8"), 16);
-            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            byte[] original = cipher.doFinal(Base64.decode(encrypted, Base64.DEFAULT));
-            return new String(original);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
     @Override
     public int getItemCount() {
         return contactList.size();
