@@ -1,4 +1,4 @@
-package com.example.biagg.cryptolocker;
+package com.example.thekeymaker.cryptolocker;
 
 import android.content.DialogInterface;
 import android.content.Intent;

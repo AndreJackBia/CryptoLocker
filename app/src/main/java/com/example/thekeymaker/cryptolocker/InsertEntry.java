@@ -1,4 +1,4 @@
-package com.example.biagg.cryptolocker;
+package com.example.thekeymaker.cryptolocker;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,12 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
-import static com.example.biagg.cryptolocker.Cryptos.encrypt;
+import static com.example.thekeymaker.cryptolocker.Cryptos.encrypt;
 
 public class InsertEntry extends AppCompatActivity {
 

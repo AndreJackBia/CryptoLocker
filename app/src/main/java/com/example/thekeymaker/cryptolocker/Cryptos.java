@@ -1,4 +1,4 @@
-package com.example.biagg.cryptolocker;
+package com.example.thekeymaker.cryptolocker;
 
 import android.util.Base64;
 import android.util.Log;

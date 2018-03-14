@@ -1,4 +1,4 @@
-package com.example.biagg.cryptolocker;
+package com.example.thekeymaker.cryptolocker;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -27,13 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
-import static com.example.biagg.cryptolocker.Cryptos.decrypt;
+import static com.example.thekeymaker.cryptolocker.Cryptos.decrypt;
 
 public class ShowData extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.biagg.cryptolocker;
+package com.example.thekeymaker.cryptolocker;
 
 /**
  * Created by biagg on 10/06/2017.
