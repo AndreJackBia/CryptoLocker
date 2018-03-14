@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+
 import static com.example.thekeymaker.cryptolocker.Cryptos.decrypt;
 
 public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteViewHolder> {
@@ -47,6 +48,29 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
         FileInputStream fis;
         try {
             fis = context.openFileInput(PASSWD);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            JSONArray json = new JSONArray(sb.toString());
+            JSONObject obj;
+            for (int i = 0; i < json.length(); i++) {
+                obj = json.getJSONObject(i);
+                if (item.getName().equals(decrypt(obj.getString("name"), CHECK))
+                        && item.getuID().equals(decrypt(obj.getString("uID"), CHECK))
+                        && item.getPsw().equals(decrypt(obj.getString("psw"), CHECK))) {
+                    json.remove(i);
+                }
+            }
+            context.deleteFile(PASSWD);
+            FileOutputStream outputStream;
+
+            outputStream = context.openFileOutput(PASSWD, Context.MODE_PRIVATE);
+            outputStream.write(json.toString().getBytes());
+            outputStream.close();
         } catch (FileNotFoundException e) {
             AlertDialog alertDialog = new AlertDialog.Builder(context).create();
             alertDialog.setTitle("Error");
@@ -58,40 +82,8 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
                         }
                     });
             alertDialog.show();
-            return;
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
         } catch (IOException e) {
             Log.e("IO Exception", "An error occured while reading file");
-        }
-        JSONArray json;
-        JSONObject obj;
-        try {
-            json = new JSONArray(sb.toString());
-            for (int i = 0; i < json.length(); i++) {
-                obj = json.getJSONObject(i);
-                if (decrypt(obj.getString("name"), CHECK).equals(item.getName())
-                        && decrypt(obj.getString("uID"), CHECK).equals(item.getuID())
-                        && decrypt(obj.getString("psw"), CHECK).equals(item.getPsw())) {
-                    json.remove(i);
-                }
-            }
-            context.deleteFile(PASSWD);
-            FileOutputStream outputStream;
-            try {
-                outputStream = context.openFileOutput(PASSWD, Context.MODE_PRIVATE);
-                outputStream.write(json.toString().getBytes());
-                outputStream.close();
-            } catch (Exception e) {
-                Log.e("Sti cazzi", "non c'è il file");
-            }
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
         }

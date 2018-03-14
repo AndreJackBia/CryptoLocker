@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,8 +81,23 @@ public class InsertEntry extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(InsertEntry.this, ShowData.class);
+        intent.putExtra("key", getIntent().getStringExtra("key"));
+        startActivity(intent);
+        finish();
+    }
+
     private boolean writeEntry(Website w) {
         JSONArray data = getJsonArray();
+        if (data == null) {
+            CharSequence text = "No JSON Array found";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+            toast.show();
+            data = new JSONArray();
+        }
         JSONObject obj = new JSONObject();
         String key = getIntent().getStringExtra("key");
         try {
@@ -118,27 +134,24 @@ public class InsertEntry extends AppCompatActivity {
 
     private JSONArray getJsonArray() {
         FileInputStream fis;
+        JSONArray res = null;
         try {
             fis = openFileInput(PASSWD);
-        } catch (FileNotFoundException e) {
-            return new JSONArray();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
             }
-        } catch (IOException e) {
-            Log.e("IO Exception", "An error occured while reading file");
-        }
-        JSONArray res = null;
-        try {
             res = new JSONArray(sb.toString());
+        } catch (FileNotFoundException e) {
+            return new JSONArray();
         } catch (JSONException e) {
             Log.e("JSON Exception", "Failed to read");
+        } catch (IOException e) {
+            Log.e("IO Exception", "An error occured while reading file");
         }
         return res;
     }

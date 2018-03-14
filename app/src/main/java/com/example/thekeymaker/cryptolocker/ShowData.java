@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.example.thekeymaker.cryptolocker.Cryptos.decrypt;
 
 public class ShowData extends AppCompatActivity {
@@ -82,6 +84,13 @@ public class ShowData extends AppCompatActivity {
         final String key = getIntent().getStringExtra("key");
         //deleteFile(PASSWD);
         List set = decryptData(key);
+        if (set == null) {
+            CharSequence text = "The list is null";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+            toast.show();
+            set = new ArrayList();
+        }
         recList.setAdapter(new WebsiteAdapter(this, set));
         itemTouchHelper.attachToRecyclerView(recList);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -97,29 +106,20 @@ public class ShowData extends AppCompatActivity {
     }
 
     private List decryptData(String key) {
-        Cryptos cryptos = new Cryptos();
         List<Website> res = new ArrayList<>();
         FileInputStream fis;
         try {
             fis = openFileInput(PASSWD);
-        } catch (FileNotFoundException e) {
-            return res;
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
             }
-        } catch (IOException e) {
-            Log.e("IO Exception", "An error occured while reading file");
-        }
-        JSONArray json;
-        JSONObject obj;
-        try {
-            json = new JSONArray(sb.toString());
+            JSONArray json = new JSONArray(sb.toString());
+            JSONObject obj;
             for (int i = 0; i < json.length(); i++) {
                 obj = json.getJSONObject(i);
                 String name = obj.getString("name");
@@ -127,8 +127,15 @@ public class ShowData extends AppCompatActivity {
                 String psw = obj.getString("psw");
                 res.add(new Website(decrypt(name, key), decrypt(uID, key), decrypt(psw, key)));
             }
+
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
+            return null;
+        } catch (FileNotFoundException e) {
+            return null;
+        } catch (IOException e) {
+            Log.e("IO Exception", "An error occured while reading file");
+            return null;
         }
         return res;
     }

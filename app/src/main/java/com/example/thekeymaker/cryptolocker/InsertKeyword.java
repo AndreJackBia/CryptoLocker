@@ -46,6 +46,7 @@ public class InsertKeyword extends AppCompatActivity {
                     Intent intent = new Intent(InsertKeyword.this, ShowData.class);
                     intent.putExtra("key", CHECK);
                     startActivity(intent);
+                    finish();
                 } else {
                     AlertDialog alertDialog = new AlertDialog.Builder(InsertKeyword.this).create();
                     alertDialog.setTitle("Error");
