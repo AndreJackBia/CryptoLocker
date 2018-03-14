@@ -63,7 +63,7 @@ public class ShowData extends AppCompatActivity {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 int swipedPosition = viewHolder.getAdapterPosition();
-                                adapter.remove(swipedPosition);
+                                adapter.remove(swipedPosition, getIntent().getStringExtra("key"));
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:

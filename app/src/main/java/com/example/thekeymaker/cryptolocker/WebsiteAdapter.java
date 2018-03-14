@@ -27,7 +27,6 @@ import static com.example.thekeymaker.cryptolocker.Cryptos.decrypt;
 public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteViewHolder> {
     private static final String PASSWD = "passwd";
     private Context context;
-    private static final String CHECK = "thekeymaker";
     private List<Website> contactList;
 
     public WebsiteAdapter(Context context, List<Website> contactList) {
@@ -35,16 +34,16 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
         this.context = context;
     }
 
-    public void remove(int position) {
+    public void remove(int position, String key) {
         Website item = contactList.get(position);
         if (contactList.contains(item)) {
             contactList.remove(position);
             notifyItemRemoved(position);
-            deleteItemFromFile(item);
+            deleteItemFromFile(item, key);
         }
     }
 
-    private void deleteItemFromFile(Website item) {
+    private void deleteItemFromFile(Website item, String key) {
         FileInputStream fis;
         try {
             fis = context.openFileInput(PASSWD);
@@ -59,9 +58,9 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
             JSONObject obj;
             for (int i = 0; i < json.length(); i++) {
                 obj = json.getJSONObject(i);
-                if (item.getName().equals(decrypt(obj.getString("name"), CHECK))
-                        && item.getuID().equals(decrypt(obj.getString("uID"), CHECK))
-                        && item.getPsw().equals(decrypt(obj.getString("psw"), CHECK))) {
+                if (item.getName().equals(decrypt(obj.getString("name"), key))
+                        && item.getuID().equals(decrypt(obj.getString("uID"), key))
+                        && item.getPsw().equals(decrypt(obj.getString("psw"), key))) {
                     json.remove(i);
                 }
             }

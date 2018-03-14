@@ -54,6 +54,7 @@ public class InsertKeyword extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.thekeymaker.cryptolocker", MODE_PRIVATE);
         if (prefs.getBoolean("firstrun", true)) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(InsertKeyword.this, R.style.AlertDialogCustom);
+            alertDialog.setCancelable(false);
             alertDialog.setTitle("Keyword");
             alertDialog.setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data");
             alertDialog.setView(R.layout.dialog);
@@ -71,11 +72,11 @@ public class InsertKeyword extends AppCompatActivity {
                                 toast.show();
                             } else {
                                 dialog.dismiss();
+                                prefs.edit().putBoolean("firstrun", false).apply();
                             }
                         }
                     });
             alertDialog.show();
-            prefs.edit().putBoolean("firstrun", false).apply();
         }
 
 
