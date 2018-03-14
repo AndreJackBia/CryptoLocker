@@ -3,6 +3,8 @@ package com.example.thekeymaker.cryptolocker;
 import android.util.Base64;
 import android.util.Log;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -53,6 +55,18 @@ public class Cryptos {
             return new String(original);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String generateDigest(String keyword) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(keyword.getBytes());
+            byte[] hash = md.digest();
+            return Arrays.toString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
         return null;
     }

@@ -85,10 +85,6 @@ public class ShowData extends AppCompatActivity {
         //deleteFile(PASSWD);
         List set = decryptData(key);
         if (set == null) {
-            CharSequence text = "The list is null";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-            toast.show();
             set = new ArrayList();
         }
         recList.setAdapter(new WebsiteAdapter(this, set));
@@ -127,17 +123,15 @@ public class ShowData extends AppCompatActivity {
                 String psw = obj.getString("psw");
                 res.add(new Website(decrypt(name, key), decrypt(uID, key), decrypt(psw, key)));
             }
-
+            return res;
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
-            return null;
         } catch (FileNotFoundException e) {
-            return null;
+            Log.e("FileNotFoundException", "the file doens't exist");
         } catch (IOException e) {
             Log.e("IO Exception", "An error occured while reading file");
-            return null;
         }
-        return res;
+        return null;
     }
 
     @Override
