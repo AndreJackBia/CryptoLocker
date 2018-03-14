@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteViewHolder> {
     private static final String PASSWD = "passwd";
     private Context context;
+    private static final String CHECK = "thekeymaker";
     private List<Website> contactList;
 
     public WebsiteAdapter(Context context, List<Website> contactList) {
@@ -76,9 +82,9 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
             json = new JSONArray(sb.toString());
             for (int i = 0; i < json.length(); i++) {
                 obj = json.getJSONObject(i);
-                if (obj.getString("name").equals(item.getName())
-                        && obj.getString("uID").equals(item.getuID())
-                        && obj.getString("psw").equals(item.getPsw())) {
+                if (decrypt(obj.getString("name"), CHECK).equals(item.getName())
+                        && decrypt(obj.getString("uID"), CHECK).equals(item.getuID())
+                        && decrypt(obj.getString("psw"), CHECK).equals(item.getPsw())) {
                     json.remove(i);
                 }
             }
@@ -94,6 +100,20 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
         }
+    }
+
+    public static String decrypt(String encrypted, String keyword) {
+        try {
+            byte[] key = Arrays.copyOf(keyword.getBytes("UTF-8"), 16);
+            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+            byte[] original = cipher.doFinal(Base64.decode(encrypted, Base64.DEFAULT));
+            return new String(original);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -122,9 +142,9 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
 
         public WebsiteViewHolder(View v) {
             super(v);
-            vName =  (TextView) v.findViewById(R.id.website);
-            vUID = (TextView)  v.findViewById(R.id.uid);
-            vPsw = (TextView)  v.findViewById(R.id.psw);
+            vName = (TextView) v.findViewById(R.id.website);
+            vUID = (TextView) v.findViewById(R.id.uid);
+            vPsw = (TextView) v.findViewById(R.id.psw);
         }
     }
 }

@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +26,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class InsertEntry extends AppCompatActivity {
 
@@ -43,7 +47,6 @@ public class InsertEntry extends AppCompatActivity {
         psw = (EditText) findViewById(R.id.passwd);
         View view = this.getWindow().getDecorView();
         view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        String key = getIntent().getStringExtra("key");
         final Button button = (Button) findViewById(R.id.store);
         psw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -67,8 +70,12 @@ public class InsertEntry extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                writeEntry(w);
-                                startActivity(new Intent(InsertEntry.this, ShowData.class));
+                                if (writeEntry(w)) {
+                                    Intent intent = new Intent(InsertEntry.this, ShowData.class);
+                                    intent.putExtra("key", getIntent().getStringExtra("key"));
+                                    startActivity(intent);
+                                    finish();
+                                }
                             }
                         });
                 alertDialog.show();
@@ -76,13 +83,22 @@ public class InsertEntry extends AppCompatActivity {
         });
     }
 
-    private void writeEntry(Website w) {
+    private boolean writeEntry(Website w) {
         JSONArray data = getJsonArray();
         JSONObject obj = new JSONObject();
         try {
-            obj.put("name", w.getName());
-            obj.put("uID", w.getuID());
-            obj.put("psw", w.getPsw());
+            String temp = encrypt(w.getName(),getIntent().getStringExtra("key"));
+            if (temp == null)
+                return false;
+            obj.put("name", temp);
+            temp = encrypt(w.getuID(),getIntent().getStringExtra("key"));
+            if (temp == null)
+                return false;
+            obj.put("uID", temp);
+            temp = encrypt(w.getPsw(),getIntent().getStringExtra("key"));
+            if (temp == null)
+                return false;
+            obj.put("psw", encrypt(w.getPsw(),getIntent().getStringExtra("key")));
             data.put(obj);
         } catch (JSONException e) {
             Log.e("JSONExeption", "error creating JSONObj");
@@ -94,9 +110,41 @@ public class InsertEntry extends AppCompatActivity {
             outputStream.close();
         } catch (FileNotFoundException e) {
             Log.e("Missing file", "File not found");
+            return false;
         } catch (IOException e) {
             Log.e("IOException", "Error while writing");
+            return false;
         }
+        return true;
+    }
+
+    private String encrypt(String psw, String keyword) {
+        String result = null;
+        try {
+            byte[] key = Arrays.copyOf(keyword.getBytes("UTF-8"), 16);
+            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+            byte[] encrypted = cipher.doFinal(psw.getBytes());
+            result = Base64.encodeToString(encrypted, Base64.DEFAULT);
+
+            /*
+            * Old encryption
+            byte[] key = keyword.getBytes("UTF-8");
+            MessageDigest sha;
+            sha = MessageDigest.getInstance("SHA-1");
+            key = sha.digest(key);
+            key = Arrays.copyOf(key, 16);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+            byte[] encrypted = cipher.doFinal(psw.getBytes());
+            result = Base64.encodeToString(encrypted, Base64.DEFAULT);*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private JSONArray getJsonArray() {

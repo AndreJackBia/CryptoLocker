@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 public class InsertKeyword extends AppCompatActivity {
 
+    private static final String CHECK = "thekeymaker";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +42,14 @@ public class InsertKeyword extends AppCompatActivity {
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (!(mEdit.getText() == null
-                        || mEdit.getText().toString().equals("")
-                        || mEdit.getText().toString().contains(" "))) {
+                if (CHECK.equals(mEdit.getText().toString())) {
                     Intent intent = new Intent(InsertKeyword.this, ShowData.class);
-                    intent.putExtra("key", mEdit.getText().toString());
+                    intent.putExtra("key", CHECK);
                     startActivity(intent);
-                    finish();
                 } else {
                     AlertDialog alertDialog = new AlertDialog.Builder(InsertKeyword.this).create();
                     alertDialog.setTitle("Error");
-                    alertDialog.setMessage("The key should not be null and should not contains whitespaces");
+                    alertDialog.setMessage("Wrong keyword, try again");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {

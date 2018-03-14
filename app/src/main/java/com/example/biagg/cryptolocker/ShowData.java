@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -26,7 +27,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class ShowData extends AppCompatActivity {
 
@@ -90,6 +95,7 @@ public class ShowData extends AppCompatActivity {
                 Intent intent = new Intent(ShowData.this, InsertEntry.class);
                 intent.putExtra("key", key);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -119,7 +125,10 @@ public class ShowData extends AppCompatActivity {
             json = new JSONArray(sb.toString());
             for (int i = 0; i < json.length(); i++) {
                 obj = json.getJSONObject(i);
-                res.add(new Website(obj.getString("name"), obj.getString("uID"), obj.getString("psw")));
+                String name = obj.getString("name");
+                String uID = obj.getString("uID");
+                String psw = obj.getString("psw");
+                res.add(new Website(decrypt(name, key), decrypt(uID, key), decrypt(psw, key)));
             }
         } catch (JSONException e) {
             Log.e("JSON Exception", "Malformed JSON array");
@@ -127,6 +136,19 @@ public class ShowData extends AppCompatActivity {
         return res;
     }
 
+    public static String decrypt(String encrypted, String keyword) {
+        try {
+            byte[] key = Arrays.copyOf(keyword.getBytes("UTF-8"), 16);
+            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+            byte[] original = cipher.doFinal(Base64.decode(encrypted, Base64.DEFAULT));
+            return new String(original);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
