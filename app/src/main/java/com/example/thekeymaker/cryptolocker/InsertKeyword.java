@@ -76,7 +76,14 @@ public class InsertKeyword extends AppCompatActivity {
                             }
                         }
                     });
-            alertDialog.show();
+            final AlertDialog dialog = alertDialog.create();
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                }
+            });
+            dialog.show();
         }
 
 
