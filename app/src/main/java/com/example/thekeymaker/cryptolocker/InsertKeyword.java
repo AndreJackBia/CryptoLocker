@@ -54,28 +54,28 @@ public class InsertKeyword extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.thekeymaker.cryptolocker", MODE_PRIVATE);
         if (prefs.getBoolean("firstrun", true)) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(InsertKeyword.this, R.style.AlertDialogCustom);
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle("Keyword");
-            alertDialog.setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data");
-            alertDialog.setView(R.layout.dialog);
-            alertDialog.setIcon(R.drawable.ic_vpn_key_black_24dp);
-            alertDialog.setNeutralButton("Store",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Dialog layd = (Dialog) dialog;
-                            EditText editText = (EditText) layd.findViewById(R.id.keyword);
-                            keyToStore = editText.getText().toString();
-                            if (!storePassword(keyToStore)) {
-                                CharSequence text = "Error storing keyword";
-                                int duration = Toast.LENGTH_SHORT;
-                                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-                                toast.show();
-                            } else {
-                                dialog.dismiss();
-                                prefs.edit().putBoolean("firstrun", false).apply();
-                            }
-                        }
-                    });
+            alertDialog.setCancelable(false)
+                    .setTitle("Keyword")
+                    .setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data")
+                    .setView(R.layout.dialog)
+                    .setIcon(R.drawable.ic_vpn_key_black_24dp)
+                    .setNeutralButton("Store",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Dialog layd = (Dialog) dialog;
+                                    EditText editText = (EditText) layd.findViewById(R.id.keyword);
+                                    keyToStore = editText.getText().toString();
+                                    if (!storePassword(keyToStore)) {
+                                        CharSequence text = "Error storing keyword";
+                                        int duration = Toast.LENGTH_SHORT;
+                                        Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                                        toast.show();
+                                    } else {
+                                        dialog.dismiss();
+                                        prefs.edit().putBoolean("firstrun", false).apply();
+                                    }
+                                }
+                            });
             final AlertDialog dialog = alertDialog.create();
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
