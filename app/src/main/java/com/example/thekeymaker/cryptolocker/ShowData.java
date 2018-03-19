@@ -34,7 +34,7 @@ import static com.example.thekeymaker.cryptolocker.Cryptos.decrypt;
 public class ShowData extends AppCompatActivity {
 
     private static final String PASSWD = "passwd";
-
+    //TODO insert logic to show password on hold press
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +82,6 @@ public class ShowData extends AppCompatActivity {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         final String key = getIntent().getStringExtra("key");
-        //deleteFile(PASSWD);
         List set = decryptData(key);
         if (set == null) {
             set = new ArrayList();

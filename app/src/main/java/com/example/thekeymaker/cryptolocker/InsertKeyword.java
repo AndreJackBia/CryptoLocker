@@ -34,6 +34,7 @@ public class InsertKeyword extends AppCompatActivity {
     private static final String KEY = "key";
     private String keyToStore;
     //TODO verification code: SMS or email?
+    //TODO move some logic: tutorial?
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +74,7 @@ public class InsertKeyword extends AppCompatActivity {
                                         Toast toast = Toast.makeText(getApplicationContext(), text, duration);
                                         toast.show();
                                     } else {
+                                        //TODO chiamata a BackupManager dataChanged();
                                         dialog.dismiss();
                                         prefs.edit().putBoolean("firstrun", false).apply();
                                     }

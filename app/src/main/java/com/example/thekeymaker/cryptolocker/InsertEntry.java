@@ -69,6 +69,7 @@ public class InsertEntry extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 if (writeEntry(w)) {
+                                    //TODO chiamata a BackupManager dataChanged();
                                     Intent intent = new Intent(InsertEntry.this, ShowData.class);
                                     intent.putExtra("key", getIntent().getStringExtra("key"));
                                     startActivity(intent);

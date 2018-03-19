@@ -40,6 +40,7 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
             contactList.remove(position);
             notifyItemRemoved(position);
             deleteItemFromFile(item, key);
+            //TODO chiamata a BackupManager dataChanged();
         }
     }
 
