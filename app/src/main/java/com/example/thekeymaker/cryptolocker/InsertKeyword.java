@@ -33,7 +33,7 @@ public class InsertKeyword extends AppCompatActivity {
     SharedPreferences prefs = null;
     private static final String KEY = "key";
     private String keyToStore;
-
+    //TODO verification code: SMS or email?
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +58,7 @@ public class InsertKeyword extends AppCompatActivity {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(InsertKeyword.this, R.style.AlertDialogCustom);
             alertDialog.setCancelable(false)
                     .setTitle("Keyword")
-                    .setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data:")
+                    .setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data: \n (at least 7 characters)")
                     .setView(R.layout.dialog)
                     .setIcon(R.drawable.ic_vpn_key_black_24dp)
                     .setNeutralButton("Store",
@@ -82,9 +82,20 @@ public class InsertKeyword extends AppCompatActivity {
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.materialGrey));
                     dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
                     EditText keyEdit = (EditText) dialog.findViewById(R.id.keyword);
+                    keyEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            boolean handled = false;
+                            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).performClick();
+                                handled = true;
+                            }
+                            return handled;
+                        }
+                    });
                     keyEdit.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -93,10 +104,12 @@ public class InsertKeyword extends AppCompatActivity {
 
                         @Override
                         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                            if (charSequence.toString().length() < 6) {
+                            if (charSequence.toString().length() <= 6) {
                                 dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(false);
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.materialGrey));
                             } else {
                                 dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(true);
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
                             }
                         }
 
