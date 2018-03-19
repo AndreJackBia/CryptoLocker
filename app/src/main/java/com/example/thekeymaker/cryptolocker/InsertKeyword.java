@@ -85,17 +85,6 @@ public class InsertKeyword extends AppCompatActivity {
                     dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.materialGrey));
                     dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
                     EditText keyEdit = (EditText) dialog.findViewById(R.id.keyword);
-                    keyEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            boolean handled = false;
-                            if (actionId == EditorInfo.IME_ACTION_SEND) {
-                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).performClick();
-                                handled = true;
-                            }
-                            return handled;
-                        }
-                    });
                     keyEdit.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

@@ -19,7 +19,6 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
-        android:imeOptions="actionSend"
         android:inputType="textPassword"
         />
     </android.support.design.widget.TextInputLayout>
