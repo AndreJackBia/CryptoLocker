@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -56,13 +58,13 @@ public class InsertKeyword extends AppCompatActivity {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(InsertKeyword.this, R.style.AlertDialogCustom);
             alertDialog.setCancelable(false)
                     .setTitle("Keyword")
-                    .setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data")
+                    .setMessage("It's the first time you are running this app. Choose a keyword to encrypt/decrypt your data:")
                     .setView(R.layout.dialog)
                     .setIcon(R.drawable.ic_vpn_key_black_24dp)
                     .setNeutralButton("Store",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Dialog layd = (Dialog) dialog;
+                                public void onClick(final DialogInterface dialog, final int which) {
+                                    final AlertDialog layd = (AlertDialog) dialog;
                                     EditText editText = (EditText) layd.findViewById(R.id.keyword);
                                     keyToStore = editText.getText().toString();
                                     if (!storePassword(keyToStore)) {
@@ -81,11 +83,32 @@ public class InsertKeyword extends AppCompatActivity {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
                     dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
+                    EditText keyEdit = (EditText) dialog.findViewById(R.id.keyword);
+                    keyEdit.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            if (charSequence.toString().length() < 6) {
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(false);
+                            } else {
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(true);
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+
+                        }
+                    });
                 }
             });
             dialog.show();
         }
-
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

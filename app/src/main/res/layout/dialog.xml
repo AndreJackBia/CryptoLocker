@@ -2,9 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <EditText
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/etPasswordLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:passwordToggleTint="@color/colorAccent"
+        app:passwordToggleEnabled="true">
+
+    <android.support.design.widget.TextInputEditText
         android:id="@+id/keyword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,6 +20,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
         android:imeOptions="actionSend"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         />
+    </android.support.design.widget.TextInputLayout>
 </RelativeLayout>
