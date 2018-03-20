@@ -33,7 +33,6 @@ public class InsertKeyword extends AppCompatActivity {
     SharedPreferences prefs = null;
     private static final String KEY = "key";
     private String keyToStore;
-    //TODO verification code: SMS or email?
     //TODO move some logic: tutorial?
     @Override
     protected void onCreate(Bundle savedInstanceState) {

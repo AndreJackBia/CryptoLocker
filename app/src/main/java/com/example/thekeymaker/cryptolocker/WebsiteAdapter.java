@@ -4,15 +4,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,17 +31,17 @@ import static com.example.thekeymaker.cryptolocker.Cryptos.decrypt;
 public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteViewHolder> {
     private static final String PASSWD = "passwd";
     private Context context;
-    private List<Website> contactList;
+    private List<Website> websites;
 
-    public WebsiteAdapter(Context context, List<Website> contactList) {
-        this.contactList = contactList;
+    public WebsiteAdapter(Context context, List<Website> websites) {
+        this.websites = websites;
         this.context = context;
     }
 
     public void remove(int position, String key) {
-        Website item = contactList.get(position);
-        if (contactList.contains(item)) {
-            contactList.remove(position);
+        Website item = websites.get(position);
+        if (websites.contains(item)) {
+            websites.remove(position);
             notifyItemRemoved(position);
             deleteItemFromFile(item, key);
             //TODO chiamata a BackupManager dataChanged();
@@ -91,20 +95,38 @@ public class WebsiteAdapter extends RecyclerView.Adapter<WebsiteAdapter.WebsiteV
 
     @Override
     public int getItemCount() {
-        return contactList.size();
+        return websites.size();
     }
 
     @Override
     public void onBindViewHolder(WebsiteViewHolder websiteViewHolder, int i) {
-        Website ci = contactList.get(i);
+        Website ci = websites.get(i);
         websiteViewHolder.vName.setText(ci.getName());
         websiteViewHolder.vUID.setText(ci.getuID());
         websiteViewHolder.vPsw.setText(ci.getPsw());
+
+        websiteViewHolder.itemView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                TextView tv = (TextView) view.findViewById(R.id.psw);
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    tv.setTransformationMethod(null);
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    tv.setTransformationMethod(new PasswordTransformationMethod());
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public WebsiteViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element, viewGroup, false);
+        TextView tv = (TextView) itemView.findViewById(R.id.psw);
+        tv.setTransformationMethod(new PasswordTransformationMethod());
         return new WebsiteViewHolder(itemView);
     }
 
